@@ -11,11 +11,15 @@ extract( array_merge( $def_args, $args ), EXTR_SKIP );
 
 // View
 $args['view_type'] = 'grid';
+
 if ( empty( $args['view_types'] ) ) {
+	$args['view_types'] = array(
+		'grid',
+		'list'
+	);
 	$single_view = true;
 	$args['view_type'] = 'grid';
-}
-elseif ( is_array( $args['view_types'] ) ) {
+} elseif ( is_array( $args['view_types'] ) ) {
 	if ( count( $args['view_types'] ) == 1 ) {
 		$single_view = true;
 		$args['view_type'] = $args['view_types'][0];

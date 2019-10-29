@@ -1905,6 +1905,10 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 				$autocomplete = 'off';
 			}
 
+			if( isset( $data['classes'] ) ){
+				$classes = explode(" ", $data['classes'] );
+			}
+
 			um_fetch_user( get_current_user_id() );
 			if ( ! um_can_view_field( $data ) ) {
 				return;
@@ -2010,6 +2014,7 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 			 * ?>
 			 */
 			$field_id = apply_filters( 'um_completeness_field_id', $field_id, $data, $args );
+
 			/* Begin by field type */
 			switch ( $type ) {
 
@@ -2047,7 +2052,8 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 				case 'vimeo_video':
 				case 'soundcloud_track':
 
-					$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="' . $key . '">';
+
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).' >';
 
 					if ( isset( $data['label'] ) ) {
 						$output .= $this->field_label( $label, $key, $data );
@@ -2082,7 +2088,8 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 				/* Text */
 				case 'text':
 
-					$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="' . esc_attr( $key ) . '">';
+
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).'>';
 
 					if ( isset( $data['label'] ) ) {
 						$output .= $this->field_label( $label, $key, $data );
@@ -2117,7 +2124,8 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 				/* Number */
 				case 'number':
 
-					$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="' . esc_attr( $key ) . '">';
+					
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).'>';
 
 					if ( isset( $data['label'] ) ) {
 						$output .= $this->field_label( $label, $key, $data );
@@ -2155,11 +2163,12 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 
 					$original_key = $key;
 
+
 					if ( $key == 'single_user_password' ) {
 
 						$key = $original_key;
 
-						$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="' . esc_attr( $key ) . '">';
+						$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).'>';
 
 						if ( isset( $data['label'] ) ) {
 							$output .= $this->field_label( $label, $key, $data );
@@ -2185,10 +2194,12 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 
 					} else {
 
+
+					
 						if ( $this->set_mode == 'account' || um_is_core_page( 'account' ) ) {
 
 							$key = 'current_' . $original_key;
-							$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="' . esc_attr( $key ) . '">';
+							$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).'>';
 
 							if ( isset( $data['label'] ) ) {
 								$output .= $this->field_label( __( 'Current Password', 'ultimate-member' ), $key, $data );
@@ -2216,7 +2227,7 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 
 						$key = $original_key;
 
-						$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="' . esc_attr( $key ) . '">';
+						$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).'>';
 
 						if ( $this->set_mode == 'account' && um_is_core_page( 'account' ) || $this->set_mode == 'password' && um_is_core_page( 'password-reset' ) ) {
 
@@ -2249,7 +2260,7 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 						if ( $this->set_mode != 'login' && isset( $data['force_confirm_pass'] ) && $data['force_confirm_pass'] == 1 ) {
 
 							$key = 'confirm_' . $original_key;
-							$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="' . esc_attr( $key ) . '">';
+							$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).'>';
 
 							if ( isset( $data['label'] ) ) {
 								$output .= $this->field_label( sprintf( __( 'Confirm %s', 'ultimate-member' ), $data['label'] ), $key, $data );
@@ -2282,7 +2293,8 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 				/* URL */
 				case 'url':
 
-					$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="' . esc_attr( $key ) . '">';
+					
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).'>';
 
 					if ( isset( $data['label'] ) ) {
 						$output .= $this->field_label( $label, $key, $data );
@@ -2310,7 +2322,8 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 				/* Date */
 				case 'date':
 
-					$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="' . esc_attr( $key ). '">';
+					
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).'>';
 
 					if (isset( $data['label'] )) {
 						$output .= $this->field_label( $label, $key, $data );
@@ -2338,7 +2351,8 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 				/* Time */
 				case 'time':
 
-					$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="' . esc_attr( $key ) . '">';
+					
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).'>';
 
 					if (isset( $data['label'] )) {
 						$output .= $this->field_label( $label, $key, $data );
@@ -2370,7 +2384,9 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 
 				/* Textarea */
 				case 'textarea':
-					$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="' . esc_attr( $key ) . '">';
+
+					
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).'>';
 
 					if ( isset( $data['label'] ) ) {
 						$output .= $this->field_label( $label, $key, $data );
@@ -2445,7 +2461,9 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 
 				/* Rating */
 				case 'rating':
-					$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="' . esc_attr( $key ) . '">';
+
+					
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).'>';
 
 					if ( isset( $data['label'] ) ) {
 						$output .= $this->field_label( $label, $key, $data );
@@ -2462,12 +2480,22 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 
 				/* Gap/Space */
 				case 'spacing':
-					$output .= '<div class="um-field um-field-spacing' . $classes . '" ' . $conditional . ' style="height: ' . esc_attr( $spacing ) . '"></div>';
+
+					$classes[ ] = "um-field-spacing";
+
+					$styles['height'] = esc_attr( $spacing );
+					
+					$output .= '<div ' . $this->get_atts( $key, $classes, $conditional, $data, $styles ) . '"></div>';
 					break;
 
 				/* A line divider */
 				case 'divider':
-					$output .= '<div class="um-field um-field-divider' . $classes . '" ' . $conditional . ' style="border-bottom: ' . esc_attr( $borderwidth ) . 'px ' . esc_attr( $borderstyle ) . ' ' . esc_attr( $bordercolor ) . '">';
+
+					$classes[ ] = "um-field-divider";
+
+					$styles['border-bottom'] = esc_attr( $borderwidth ) . 'px ' . esc_attr( $borderstyle ) . ' ' . esc_attr( $bordercolor );
+
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data, $styles ).'>';
 					if ( $divider_text ) {
 						$output .= '<div class="um-field-divider-text"><span>' . esc_html( $divider_text ) . '</span></div>';
 					}
@@ -2476,7 +2504,9 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 
 				/* Single Image Upload */
 				case 'image':
-					$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="' . esc_attr( $key ) . '">';
+
+					
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).'>';
 					if ( in_array( $key, array( 'profile_photo', 'cover_photo' ) ) ) {
 						$field_value = '';
 					} else {
@@ -2548,7 +2578,9 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 
 				/* Single File Upload */
 				case 'file':
-					$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="' . esc_attr( $key ) . '">';
+
+					
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).'>';
 					$output .= '<input type="hidden" name="' . esc_attr( $key . UM()->form()->form_suffix ) . '" id="' . esc_attr( $key . UM()->form()->form_suffix ) . '" value="' . $this->field_value( $key, $default, $data ) . '" />';
 					if (isset( $data['label'] )) {
 						$output .= $this->field_label( $label, $key, $data );
@@ -2646,7 +2678,8 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 				/* Select dropdown */
 				case 'select':
 
-					$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="' . esc_attr( $key ) . '">';
+					
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).'>';
 
 					if ( isset( $data['allowclear'] ) && $data['allowclear'] == 0 ) {
 						$class = 'um-s2';
@@ -2953,7 +2986,8 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 
 					$max_selections = ( isset( $max_selections ) ) ? absint( $max_selections ) : 0;
 
-					$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="' . esc_attr( $key ) . '">';
+					
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).'>';
 
 					if ( isset( $data['allowclear'] ) && $data['allowclear'] == 0 ) {
 						$class = 'um-s2';
@@ -3179,7 +3213,8 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 						$options = apply_filters( "um_radio_field_options_{$key}", $options );
 					}
 
-					$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="' . esc_attr( $key ) . '">';
+					
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).'>';
 
 					if ( isset( $data['label'] ) ) {
 						$output .= $this->field_label( $label, $key, $data );
@@ -3317,7 +3352,8 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 						$options = apply_filters( "um_checkbox_field_options_{$key}", $options );
 					}
 
-					$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="' . esc_attr( $key ) . '">';
+					
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).'>';
 
 					if ( isset( $data['label'] ) ) {
 						$output .= $this->field_label( $label, $key, $data );
@@ -3418,7 +3454,9 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 
 				/* HTML */
 				case 'block':
-					$output .= '<div class="um-field' . $classes . '" ' . $conditional . ' data-key="' . esc_attr( $key ) . '">
+
+					
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).' >
                                 <div class="um-field-block">' . $content . '</div>
                             </div>';
 					break;
@@ -3428,7 +3466,8 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 
 					$content = str_replace( '{profile_id}', um_profile_id(), $content );
 
-					$output .= '<div class="um-field' . $classes . '" ' . $conditional . ' data-key="' . esc_attr( $key ) . '">
+
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).' >
                                 <div class="um-field-shortcode">' . do_shortcode( $content ) . '</div>
                             </div>';
 					break;
@@ -3852,12 +3891,17 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 				return;
 			}
 
+			if( isset( $data['classes'] ) ){
+				$classes = explode(" ", $data['classes'] );
+			}
+
+
 			switch ( $type ) {
 
 				/* Default */
 				default:
 
-					$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="' . esc_attr( $key ) . '">';
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).'>';
 
 					if ( isset( $data['label'] ) || ! empty( $data['icon'] ) ) {
 
@@ -3931,7 +3975,7 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 
 				/* HTML */
 				case 'block':
-					$output .= '<div class="um-field' . $classes . '" ' . $conditional . ' data-key="' . esc_attr( $key ) . '">
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).' >
                                 <div class="um-field-block">' . $content . '</div>
                             </div>';
 					break;
@@ -3941,19 +3985,27 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 
 					$content = str_replace( '{profile_id}', um_profile_id(), $content );
 
-					$output .= '<div class="um-field' . $classes . '" ' . $conditional . ' data-key="' . esc_attr( $key ) . '">
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).' >
                                 <div class="um-field-shortcode">' . do_shortcode( $content ) . '</div>
                             </div>';
 					break;
 
 				/* Gap/Space */
 				case 'spacing':
-					$output .= '<div class="um-field um-field-spacing' . $classes . '" ' . $conditional . ' style="height: ' . esc_attr( $spacing ) . '"></div>';
+
+					$classes[ ] = "um-field-spacing";
+					$styles['height'] = esc_attr( $height );
+
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data, $styles ).' ></div>';
 					break;
 
 				/* A line divider */
 				case 'divider':
-					$output .= '<div class="um-field um-field-divider' . $classes . '" ' . $conditional . ' style="border-bottom: ' . esc_attr( $borderwidth ) . 'px ' . esc_attr( $borderstyle ) . ' ' . esc_attr( $bordercolor ) . '">';
+
+					$classes[ ] = "um-field-divider";
+					$styles['border-bottom'] = esc_attr( $borderwidth ) . 'px ' . esc_attr( $borderstyle ) . ' ' . esc_attr( $bordercolor );
+
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data, $styles ).' >';
 					if ($divider_text) {
 						$output .= '<div class="um-field-divider-text"><span>' . $divider_text . '</span></div>';
 					}
@@ -3963,7 +4015,8 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 				/* Rating */
 				case 'rating':
 
-					$output .= '<div class="um-field' . $classes . '"' . $conditional . ' data-key="' . esc_attr( $key ) . '">';
+
+					$output .= '<div '.$this->get_atts( $key, $classes, $conditional, $data ).'>';
 
 					if (isset( $data['label'] ) || isset( $data['icon'] ) && !empty( $data['icon'] )) {
 						$output .= $this->field_label( $label, $key, $data );
@@ -4420,7 +4473,80 @@ if ( ! class_exists( 'um\core\Fields' ) ) {
 				echo $output;
 			}
 			die;
+		}
 
+
+		/**
+		 * Get rendered field attributes
+		 * @since  2.0.56 
+		 * 
+		 * @param  string $key         
+		 * @param  array $classes     
+		 * @param  string $conditional 
+		 * @param  array $data        
+		 * @param  array  $field_style 
+		 * 
+		 * @return string/html
+		 */
+		function get_atts( $key, $classes, $conditional, $data, $field_style = array() ){
+
+			array_unshift( $classes, "um-field" );
+
+			$field_atts = array(
+				"id" => array(
+					"um_field_{$this->set_id}_{$key}",
+				),
+				"class" => $classes,
+				"data-key" => array(
+					esc_attr( $key )
+				)
+			);
+
+			if( ! empty( $field_style ) && is_array( $field_style ) ){
+
+				$arr_inline_style = '';
+				foreach( $field_style as $style_attr => $style_value ){
+					$arr_inline_style .= "{$style_attr}:{$style_value};";
+				}
+				$field_atts['style'] = array( $arr_inline_style );
+			}
+
+			/**
+			 * UM hook
+			 *
+			 * @type filter
+			 * @title um_field_extra_atts
+			 * @description user for adding extra field attributes
+			 * @input_vars
+			 * [{"var":"$field_atts","type":"array","desc":"Field attributes"},
+			 * [{"var":"$field_id","type":"string","desc":"Field id"},
+			 * {"var":"$data","type":"array","desc":"Field Data"}]
+			 * {"var":"$args","type":"array","desc":"Optional field arguments"}]
+			 * @change_log
+			 * ["Since: 2.0.57"]
+			 * @usage add_filter( 'um_field_extra_atts', 'function_name', 10, 3 );
+			 * @example
+			 * <?php
+			 * add_filter( 'um_field_extra_atts', 'function_name', 10, 3 );
+			 * function function_name( $field_id, $data, $args ) {
+			 *     // your code here
+			 *     return $array_extra_atts;
+			 * }
+			 * ?>
+			 */
+			$atts = apply_filters( 'um_field_extra_atts', $field_atts, $field_id, $data, $args );
+
+			foreach( $field_atts as $att_name => $att_values ){
+
+				$att_values = implode(" ", $att_values );
+				
+
+				$html_atts .= "{$att_name}=\"{$att_values}\"";
+			}
+
+			$html_atts .= $conditional;
+
+			return $html_atts;
 		}
 	}
 }
